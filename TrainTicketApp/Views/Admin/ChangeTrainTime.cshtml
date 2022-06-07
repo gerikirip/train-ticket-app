@@ -1,0 +1,84 @@
+﻿@model TrainTime
+@using Microsoft.AspNetCore.Http;
+@using Newtonsoft.Json;
+@using System.Configuration;
+
+@{
+    List<TicketType> ticketTypes = JsonConvert.DeserializeObject<List<TicketType>>(Context.Session.GetString("TicketTypes"));
+}
+
+@if (ConfigurationManager.AppSettings["AppMode"] == "ADMIN")
+{
+    @if (ViewBag.Message != null)
+    {
+        <div class="alert alert-success" role="alert">
+            @ViewBag.Message
+        </div>
+    }
+
+    @if (ViewBag.Error != null)
+    {
+        <div class="alert alert-danger" role="alert">
+            @ViewBag.Error
+        </div>
+    }
+
+    @using (Html.BeginForm("ChangeTrainTime", "Admin", FormMethod.Post))
+    {
+        @Html.ValidationSummary(true)
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                @Html.LabelFor(model => model.Train.OriginStation, "Indulási hely:")
+                @Html.TextBoxFor(model => model.Train.OriginStation, new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.Train.OriginStation, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group col-md-6">
+                @Html.LabelFor(model => model.Train.DestStation, "Érkezési hely:")
+                @Html.TextBoxFor(model => model.Train.DestStation, new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.Train.DestStation, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                @Html.LabelFor(model => model.Train.Distance, "Távolság:")
+                @Html.TextBoxFor(model => model.Train.Distance, new { @class = "form-control", @type = "number" })
+                @Html.ValidationMessageFor(model => model.Train.Distance, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group col-md-6">
+                @Html.LabelFor(model => model.Train.TravelTime, "Menetidő:")
+                @Html.TextBoxFor(model => model.Train.TravelTime, new { @class = "form-control", @type = "time" })
+                @Html.ValidationMessageFor(model => model.Train.TravelTime, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                @Html.LabelFor(model => model.Wagon, "Vagon:")
+                @Html.TextBoxFor(model => model.Wagon, new { @class = "form-control", @type = "number", @min = "1" })
+            </div>
+            <div class="form-group col-md-6">
+                @Html.LabelFor(model => model.SeatCount, "Ülőhely:")
+                @Html.TextBoxFor(model => model.SeatCount, new { @class = "form-control", @type = "number", @min = "1" })
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                @Html.LabelFor(model => model.Day.Date, "Nap:")
+                @Html.TextBoxFor(model => model.Day.Date, "{0:yyyy-MM-dd}", new { @class = "form-control", @type = "date" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.Time, "Időpont:")
+                @Html.TextBoxFor(model => model.Time, new { @class = "form-control", @type = "time" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.TicketTypeId, "Jegytipus:")
+            @Html.DropDownListFor(model => model.TicketTypeId, new SelectList(ticketTypes, "Id", "Name"), new { @class = "form-control mb-2 mr-sm-2" })
+        </div>
+
+        <input type="submit" value="Rögzítés" class="btn btn-primary mb-2 mr-sm-2">
+    }
+}
+else
+{
+    <h1>Hozzáférés megtagadva!</h1>
+}

@@ -1,0 +1,77 @@
+﻿@model Train
+@using Microsoft.AspNetCore.Http;
+@using System.Configuration;
+
+<script>
+    let ticketTypes = @Html.Raw(Context.Session.GetString("TicketTypes"));
+</script>
+@if (ConfigurationManager.AppSettings["AppMode"] == "ADMIN")
+{
+
+    @if (ViewBag.Message != null)
+    {
+        <div class="alert alert-success" role="alert">
+            @ViewBag.Message
+        </div>
+    }
+
+    @if (ViewBag.Error != null)
+    {
+        <div class="alert alert-danger" role="alert">
+            @ViewBag.Error
+        </div>
+    }
+
+    @using (Html.BeginForm("NewTrain", "Admin", FormMethod.Post))
+    {
+        @Html.ValidationSummary(true)
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                @Html.LabelFor(model => model.OriginStation, "Indulási hely:")
+                @Html.TextBoxFor(model => model.OriginStation, new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.OriginStation, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group col-md-6">
+                @Html.LabelFor(model => model.DestStation, "Érkezési hely:")
+                @Html.TextBoxFor(model => model.DestStation, new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.DestStation, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                @Html.LabelFor(model => model.Distance, "Távolság:")
+                @Html.TextBoxFor(model => model.Distance, new { @class = "form-control", @type = "number" })
+                @Html.ValidationMessageFor(model => model.Distance, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group col-md-6">
+                @Html.LabelFor(model => model.TravelTime, "Menetidő:")
+                @Html.TextBoxFor(model => model.TravelTime, new { @class = "form-control", @type = "time" })
+                @Html.ValidationMessageFor(model => model.TravelTime, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                @Html.Label("Vagon")
+                @Html.TextBox("wagon", "1", new { @class = "form-control", @type = "number", @min = "1" })
+            </div>
+            <div class="form-group col-md-6">
+                @Html.Label("Ülőhely")
+                @Html.TextBox("seatCount", "1", new { @class = "form-control", @type = "number", @min = "1" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.Label("Nap")
+            @Html.TextBox("date", "", new { @class = "form-control", @type = "date" })
+        </div>
+
+        <input type="button" onclick="addFields()" value="Új időpont" class="btn btn-primary mb-2">
+        <div id="container"></div>
+        <input type="submit" value="Rögzítés" class="btn btn-primary mb-2 mr-sm-2">
+
+    }
+}
+else
+{
+    <h1>Hozzáférés megtagadva!</h1>
+}
+

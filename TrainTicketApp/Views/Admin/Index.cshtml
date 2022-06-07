@@ -1,0 +1,81 @@
+﻿@using System.Configuration;
+
+@{
+    ViewData["Title"] = "Admin mode";
+}
+
+
+@if (ConfigurationManager.AppSettings["AppMode"] == "ADMIN")
+{
+    @using (Html.BeginForm("Index", "Admin", FormMethod.Post))
+    {
+        <div class="form-inline">
+            @Html.TextBox("origStation", "", new { @class = "form-control mb-2 mr-sm-2", @placeholder = "Indulási hely" })
+            @Html.TextBox("destStation", "", new { @class = "form-control mb-2 mr-sm-2", @placeholder = "Érkezési hely" })
+            @Html.TextBox("date", "", new { @type = "date", @class = "form-control mb-2 mr-sm-2" })
+            @Html.TextBox("time", "", new { @type = "time", @class = "form-control mb-2 mr-sm-2" })
+            <input type="submit" value="Menetrend" class="btn btn-primary mb-2">
+        </div>
+    }
+    <div class="text-center">
+        @if (ViewBag.TrainTimes != null)
+        {
+            <table class="table">
+                <tr>
+                    <th>Indulási hely</th>
+                    <th>Érkezési hely</th>
+                    <th>Nap</th>
+                    <th>Indulási idő</th>
+                    <th>Menetidő</th>
+                    <th>Jegytípusa</th>
+                    <th>Jegyvásárlás</th>
+                    <th>Járat módosítása</th>
+                </tr>
+
+                @foreach (TrainTime trainTime in ViewBag.TrainTimes)
+                {
+                    <tr>
+                        <td>
+                            @trainTime.Train.OriginStation
+                        </td>
+                        <td>
+                            @trainTime.Train.DestStation
+                        </td>
+                        <td>
+                            @trainTime.Day.Date.ToShortDateString()
+                        </td>
+                        <td>
+                            @trainTime.Time
+                        </td>
+                        <td>
+                            @trainTime.Train.TravelTime
+                        </td>
+                        <td>
+                            @trainTime.TicketType.Name
+                        </td>
+                        <td>
+                            @if (trainTime.Day.Date > DateTime.Now || (trainTime.Day.Date.ToShortDateString() == DateTime.Now.ToShortDateString() && trainTime.Time > DateTime.Now.TimeOfDay))
+                            {
+                                @if (trainTime.TicketType.Name == "Hely")
+                                {
+                                    @Html.ActionLink("Jegyvasárálás", "BuyTicketWithSeat", "Ticket", new { @id = trainTime.Id })
+                                }
+                                else
+                                {
+                                    @Html.ActionLink("Jegyvasárálás", "BuyTicket", "Ticket", new { @id = trainTime.Id })
+                                }
+                            }
+                        </td>
+                        <td>
+                            @Html.ActionLink("Járat módosítása", "ChangeTrainTime", "Admin", new { @id = trainTime.Id })
+                        </td>
+                    </tr>
+                }
+            </table>
+        }
+    </div>
+}
+else
+{
+    <h1>Hozzáférés megtagadva!</h1>
+}

@@ -1,0 +1,94 @@
+﻿@{
+    var takenSeats = (Dictionary<int, List<int>>)ViewBag.TakenSeats;
+}
+
+@model Owner
+
+@if (ViewBag.TrainTime != null)
+{
+
+    <div class="font-weight-bold">Indulási hely: @ViewBag.TrainTime.Train.OriginStation </div>
+    <div class="font-weight-bold">Érkezési hely: @ViewBag.TrainTime.Train.DestStation</div>
+    <div class="font-weight-bold">Indulás: @ViewBag.TrainTime.Time</div>
+    <div class="font-weight-bold">Nap: @ViewBag.TrainTime.Day.Date.ToShortDateString()</div>
+    <div class="font-weight-bold">Jegy tipus: @ViewBag.TrainTime.TicketType.Name</div>
+    <div class="font-weight-bold">Jegy ára: @ViewBag.Price</div>
+    <br>
+
+    @using (Html.BeginForm("BuyTicketWithSeat", "Ticket", FormMethod.Post))
+    {
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                @Html.LabelFor(model => model.LastName, "Vezetéknév:")
+                @Html.TextBoxFor(model => model.LastName, new { @class = "form-control mb-2 mr-sm-2", @placeholder = "Vezetéknév" })
+                @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group col-md-6">
+                @Html.LabelFor(model => model.FirstName, "Keresztnév:")
+                @Html.TextBoxFor(model => model.FirstName, new { @class = "form-control mb-2 mr-sm-2", @placeholder = "Keresztnév" })
+                @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.Address, "Lakcím:")
+            @Html.TextBoxFor(model => model.Address, new { @class = "form-control mb-2 mr-sm-2", @placeholder = "Lakcím" })
+            @Html.ValidationMessageFor(model => model.Address, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                @Html.LabelFor(model => model.Email, "Email:")
+                @Html.TextBoxFor(model => model.Email, new { @class = "form-control mb-2 mr-sm-2", @placeholder = "Email" })
+                @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group col-md-6">
+                @Html.LabelFor(model => model.PhoneNumber, "Telefonszám:")
+                @Html.TextBoxFor(model => model.PhoneNumber, new { @class = "form-control mb-2 mr-sm-2", @placeholder = "Telefonszám" })
+                @Html.ValidationMessageFor(model => model.PhoneNumber, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                @Html.Label("Kocsi:")
+                @Html.TextBox("wagon", "1", new { @class = "form-control", @type = "number", @min = "1", @max = @ViewBag.TrainTime.Wagon })
+            </div>
+            <div class="form-group col-md-6">
+                @Html.Label("Ülés:")
+                @Html.TextBox("seat", "1", new { @class = "form-control", @type = "number", @min = "1", @max = @ViewBag.TrainTime.SeatCount })
+            </div>
+        </div>
+        <input type="hidden" name="trainTimeId" value="@ViewBag.TrainTime.Id">
+        <input type="button" onclick="location.href = '@Url.Action("Index","Home")'" value="Vissza" class="btn btn-primary mb-2">
+        <input type="submit" value="Vásárlás" class="btn btn-primary mb-2">
+
+        @if (ViewBag.Error != null)
+        {
+            <p class="alert-warning">@ViewBag.Error</p>
+        }
+    }
+
+    <br>
+    <table class="table table-striped ">
+        <tr>
+            <th>Kocsi</th>
+            <th>Foglalt helyek</th>
+        </tr>
+        @foreach (KeyValuePair<int, List<int>> wagon in takenSeats)
+        {
+            <tr>
+                <td>@wagon.Key</td>
+                <td>
+                    @foreach (int seat in wagon.Value)
+                    {
+                        <span>@seat</span>
+                    }
+                </td>
+            </tr>
+        }
+    </table>
+
+}
+else
+{
+    <div>Hiba 404!</div>
+}

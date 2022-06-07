@@ -1,0 +1,42 @@
+﻿@using (Html.BeginForm("GetTicket", "Ticket", FormMethod.Post))
+{
+    @Html.TextBox("selectedTicketId", "", new { @class = "form-control mb-2", @placeholder = "Rendelés azonosítója" })
+    <input type="button" onclick="location.href = '@Url.Action("Index","Home")'" value="Vissza" class="btn btn-primary mb-2">
+    <input type="submit" class="btn btn-primary mb-2" value="Rendelés lekérése">
+}
+
+@if (ViewBag.Ticket != null)
+{
+    <h2>Rendelés adatai:</h2>
+    <div class="font-weight-bold">Vezetéknév: @ViewBag.Ticket.Owner.LastName</div>
+    <div class="font-weight-bold">Keresztnév: @ViewBag.Ticket.Owner.FirstName</div>
+    <div class="font-weight-bold">Email: @ViewBag.Ticket.Owner.Email</div>
+    <div class="font-weight-bold">Telefonszám: @ViewBag.Ticket.Owner.PhoneNumber</div>
+    <div class="font-weight-bold">Lakcím: @ViewBag.Ticket.Owner.Address</div>
+    <div class="font-weight-bold">Indulási hely: @ViewBag.Ticket.Time.Train.OriginStation</div>
+    <div class="font-weight-bold">Érkezési hely: @ViewBag.Ticket.Time.Train.DestStation</div>
+    <div class="font-weight-bold">Nap: @ViewBag.Ticket.Time.Day.Date.ToShortDateString()</div>
+    <div class="font-weight-bold">Időpont: @ViewBag.Ticket.Time.Time</div>
+    <div class="font-weight-bold">Jegy tipusa: @ViewBag.Ticket.Time.TicketType.Name</div>
+    @if (ViewBag.Ticket.Wagon != null && ViewBag.Ticket.SeatNumber != null)
+    {
+        <div class="font-weight-bold">Vagon szám: @ViewBag.Ticket.Wagon</div>
+        <div class="font-weight-bold">Szék szám: @ViewBag.Ticket.SeatNumber</div>
+    }
+    <div class="font-weight-bold">Ár: @ViewBag.Ticket.Price Ft</div>
+    @if (ViewBag.Ticket.Time.Day.Date > DateTime.Now || (ViewBag.Ticket.Time.Day.Date.ToShortDateString() == DateTime.Now.ToShortDateString() && ViewBag.Ticket.Time.Time > DateTime.Now.TimeOfDay))
+    {
+        @Html.ActionLink("Rendelés visszamondása", "RemoveTicket", "Ticket", new { @ticketId = ViewBag.Ticket.TicketId })
+    }
+}
+else
+{
+    if (ViewBag.Message != null)
+    {
+        <div>@ViewBag.Message</div>
+    }
+    @if (ViewBag.Error != null)
+    {
+        <div>@ViewBag.Error</div>
+    }
+}

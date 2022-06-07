@@ -1,0 +1,27 @@
+﻿@using System.Configuration;
+
+<script>
+    let ticketStats = @Html.Raw(@ViewBag.TicketStats);
+</script>
+@if (ConfigurationManager.AppSettings["AppMode"] == "ADMIN")
+{
+
+    @using (Html.BeginForm("Chart", "Admin", FormMethod.Post))
+    {
+        <div class="form-inline">
+            @Html.TextBox("origStation", "", new { @class = "form-control mb-2 mr-sm-2", @placeholder = "Indulási hely" })
+            @Html.TextBox("destStation", "", new { @class = "form-control mb-2 mr-sm-2", @placeholder = "Érkezési hely" })
+            @Html.Label("Kezdés:")
+            @Html.TextBox("dateBegin", "", new { @type = "datetime-local", @class = "form-control mb-2 mr-sm-2" })
+            @Html.Label("Vég:")
+            @Html.TextBox("dateEnd", "", new { @type = "datetime-local", @class = "form-control mb-2 mr-sm-2" })
+            <input type="submit" value="Statisztika" class="btn btn-primary mb-2">
+        </div>
+    }
+
+    <div id="pie_div"></div>
+}
+else
+{
+    <h1>Hozzáférés megtagadva!</h1>
+}

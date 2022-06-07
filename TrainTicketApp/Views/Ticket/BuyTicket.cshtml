@@ -1,0 +1,55 @@
+﻿
+@model Owner
+
+@if (ViewBag.TrainTime != null)
+{
+    <div class="font-weight-bold">Indulási hely: @ViewBag.TrainTime.Train.OriginStation </div>
+    <div class="font-weight-bold">Érkezési hely: @ViewBag.TrainTime.Train.DestStation</div>
+    <div class="font-weight-bold">Indulás: @ViewBag.TrainTime.Time</div>
+    <div class="font-weight-bold">Nap: @ViewBag.TrainTime.Day.Date.ToShortDateString()</div>
+    <div class="font-weight-bold">Jegy típus: @ViewBag.TrainTime.TicketType.Name</div>
+    <div class="font-weight-bold">Jegy ára: @ViewBag.Price</div>
+    <br>
+
+    @using (Html.BeginForm("BuyTicket", "Ticket", FormMethod.Post))
+    {
+        @Html.ValidationSummary(true)
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                @Html.LabelFor(model => model.LastName, "Vezetéknév:")
+                @Html.TextBoxFor(model => model.LastName, new { @class = "form-control mb-2 mr-sm-2", @placeholder = "Vezetéknév" })
+                @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group col-md-6">
+                @Html.LabelFor(model => model.FirstName, "Keresztnév:")
+                @Html.TextBoxFor(model => model.FirstName, new { @class = "form-control mb-2 mr-sm-2", @placeholder = "Keresztnév" })
+                @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.Address, "Lakcím:")
+            @Html.TextBoxFor(model => model.Address, new { @class = "form-control mb-2 mr-sm-2", @placeholder = "Lakcím" })
+            @Html.ValidationMessageFor(model => model.Address, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                @Html.LabelFor(model => model.Email, "Email:")
+                @Html.TextBoxFor(model => model.Email, new { @class = "form-control mb-2 mr-sm-2", @placeholder = "Email" })
+                @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group col-md-6">
+                @Html.LabelFor(model => model.PhoneNumber, "Telefonszám:")
+                @Html.TextBoxFor(model => model.PhoneNumber, new { @class = "form-control mb-2 mr-sm-2", @placeholder = "Telefonszám" })
+                @Html.ValidationMessageFor(model => model.PhoneNumber, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <input type="button" onclick="location.href = '@Url.Action("Index","Home")'" value="Vissza" class="btn btn-primary mb-2">
+        <input type="submit" value="Vásárlás" class="btn btn-primary mb-2">
+        <input type="hidden" name="trainTimeId" value="@ViewBag.TrainTime.Id">
+    }
+}
+else
+{
+    <div>Hiba 404!</div>
+}
